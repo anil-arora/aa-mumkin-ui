@@ -127,17 +127,14 @@ export default function App() {
             return null;
         });
 
-    function loginAutomatically(emailId) {
-        const isUserAllowedUri = '/admin/allow-user/allowed?emailId=' + emailId;
-        axiosInstance.post(isUserAllowedUri)
-            .then((res) => {
-                if (res) {
-                    navigate('/dashboards/default');
-                } else {
-                    navigate('/error');
-                }
+    function loginToUpdateClaim(user) {
+        const loginUri = '/api/v1/auth/login';
+        axiosInstance.post(loginUri)
+            .then(() => {
+                navigate('/dashboards/default');
             })
             .catch((err) => {
+                navigate('/error');
                 console.error(err)
             });
     }
@@ -148,7 +145,7 @@ export default function App() {
             if (user) {
                 user.getIdToken(true).then(token => {
                     axiosInstance.defaults.headers.common['Authorization'] = `Bearer ${token}`;
-                    loginAutomatically(user.email);
+                    loginToUpdateClaim(user);
                 })
             }
             setLoggedUser(user);
